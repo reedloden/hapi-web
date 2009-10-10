@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>hAPI test</title>
+<script src="js/md5.js"></script>
+<script src="js/hapi.js"></script>
+<script>
+  function makeRequest() {
+    hapi = new hAPI(document.getElementById("name").value, document.getElementById("pass").value);
+    var method = document.getElementById("method").value;
+    var params = JSON.parse(document.getElementById("params").value);
+    hapi.request(method, params, function(result, status) {
+      alert(uneval(status));
+      document.getElementById("result").value = uneval(result);
+    });
+  }
+</script>
+</head>
+<body>
+  <div>
+  <label for="name">Username:</label>
+
+  <input id="name" type="text"/>
+  <label for="pass">Password:</label>
+  <input id="pass" type="password"/>
+  </div>
+  <div>
+  <label for="method">Method:</label>
+  <input id="method" type="text"/>
+  <label for="params">Parameters (as JSON object):</label>
+
+  <input id="params" type="text" value="{}"/>
+  </div>
+  <button onclick="makeRequest()">Go!</button>
+  <br>
+  <textarea id="result" rows="30" cols="100"></textarea>
+</body>
+</html>
