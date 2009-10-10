@@ -1,11 +1,17 @@
 <html>
 <head>
 <title>hAPI test</title>
-<script src="js/md5.js"></script>
-<script src="js/hapi.js"></script>
+<script type="application/javascript" src="js/md5.js"></script>
+<script type="application/javascript;version=1.7" src="js/hapi.js"></script>
 <script>
-  function makeRequest() {
-    hapi = new hAPI(document.getElementById("name").value, document.getElementById("pass").value);
+  var hapi = new hAPI();
+
+  function reallyMakeRequest(aStatus) {
+    if (!hapi.authenticated) {
+      alert(aStatus.msg || "Authentication error!");
+      return;
+    }
+
     var method = document.getElementById("method").value;
     var params = JSON.parse(document.getElementById("params").value);
     hapi.request(method, params, function(result, status) {
@@ -13,15 +19,24 @@
       document.getElementById("result").value = uneval(result);
     });
   }
+
+  function makeRequest() {
+    if (!hapi.authenticated)
+      this.hapi.authenticate(document.getElementById("name").value,
+                             document.getElementById("pass").value,
+                             reallyMakeRequest);
+    else
+      reallyMakeRequest();
+  }
 </script>
 </head>
 <body>
-  <div>
-  <label for="name">Username:</label>
+  <div id="auth">
+    <label for="name">Username:</label>
 
-  <input id="name" type="text"/>
-  <label for="pass">Password:</label>
-  <input id="pass" type="password"/>
+    <input id="name" type="text"/>
+    <label for="pass">Password:</label>
+    <input id="pass" type="password"/>
   </div>
   <div>
   <label for="method">Method:</label>
@@ -33,5 +48,9 @@
   <button onclick="makeRequest()">Go!</button>
   <br>
   <textarea id="result" rows="30" cols="100"></textarea>
+  <script>
+    if (hapi.authenticated)
+      document.body.removeChild(document.getElementById("auth"));
+  </script>
 </body>
 </html>

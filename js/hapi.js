@@ -34,40 +34,55 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function hAPI(aUser, aPass) {
-  this.username = aUser;
-  this.password = aPass;
+function hAPI() {
+  // Check if there's an existing session, authenticate otherwise.
+  this.authenticate();
 }
 hAPI.prototype = {
-  _apiurl: "https://api.voxel.net/",
-  username: "",
-  password: "",
+  authenticated: false,
+  _key: "",
+  _secret: "",
+  _apiurl: "https://api.voxel.net/version/1.0/",
 
-  request: function(aMethod, aData, aCallback) {
-    function flatten(obj, isSig) {
-      var arr = [];
-      for (var key in obj) {
-        if (isSig)
-          arr.push(key + "" + obj[key]);
-        else
-          arr.push(encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]));
+  authenticate: function(aUsername, aPassword, aCallback) {
+    var tokens = [tok.split("=") for each (tok in document.cookie.split(";"))
+                  if (tok.indexOf("key") || tok.indexOf("secret"))];
+    if (tokens.length == 2) {
+      if (tokens[0][0] == "key")
+        [[, this._key], [, this._secret]] = tokens;
+      else
+        [[, this._secret], [, this._key]] = tokens;
+      this.authenticated = true;
+    } else if (aUsername && aPassword) {
+      function callback(result, status) {
+        if (result.authkey) {
+          this._key = result.authkey.key;
+          this._secret = result.authkey.secret;
+          let secure = (document.location.protocol == "https:") ? ";secure" : "";
+          document.cookie = "key=" + this._key + secure;
+          document.cookie = "secret=" + this._secret + secure;
+          this.authenticated = true;
+          aCallback();
+        } else {
+          this.authenticated = false;
+          if (aCallback)
+            aCallback(status);
+        }
       }
-      return arr;
+
+      let data = {};
+      data.auth = {user: aUsername, password: aPassword};
+      data.url = this._apiurl + "?method=voxel.hapi.authkeys.read&format=json"
+
+      this._makeRequest("GET", data, callback);
+    } else {
+      this.authenticated = false;
+      if (aCallback)
+        aCallback({code: 500, msg: "Username and password are required"});
     }
+  },
 
-    var urlParams = {
-      method: aMethod,
-      user: this.username,
-      format: "json",
-      timestamp: this._generateTimestamp()
-    };
-
-    var sig = (flatten(aData, true).concat(flatten(urlParams, true))).sort();
-    urlParams.api_sig = hex_md5(this.password + sig.join(""));
-
-    var url = this._apiurl + "?" + flatten(urlParams, false).join("&");
-    var postData = flatten(aData, false).join("&");
-
+  _makeRequest: function(aHttpMethod, aData, aCallback) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(aEvent) {
       if (xhr.readyState == 4) {
@@ -89,9 +104,44 @@ hAPI.prototype = {
       }
     };
 
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send(postData);
+    if (aData.auth)
+      xhr.withCredentials = true;
+    xhr.open(aHttpMethod, aData.url, 
+             aData.async || true,
+             aData.auth.user || null,
+             aData.auth.password || null);
+    if (aData.postData)
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(aData.postData || null);
+  },
+
+  request: function(aMethod, aData, aCallback) {
+    function flatten(obj, isSig) {
+      var arr = [];
+      for (let key in obj) {
+        if (isSig)
+          arr.push(key + "" + obj[key]);
+        else
+          arr.push(encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]));
+      }
+      return arr;
+    }
+
+    var urlParams = {
+      method: aMethod,
+      key: this._key,
+      format: "json",
+      timestamp: this._generateTimestamp()
+    };
+
+    var sig = (flatten(aData, true).concat(flatten(urlParams, true))).sort();
+    urlParams.api_sig = hex_md5(this.password + sig.join(""));
+
+    var data = {};
+    data.url = this._apiurl + "?" + flatten(urlParams, false).join("&");
+    data.postData = flatten(aData, false).join("&");
+
+    this._makeRequest("POST", data, aCallback);
   },
 
   _generateTimestamp: function() {
@@ -112,128 +162,5 @@ hAPI.prototype = {
   },
 
   test: function(aParams) {
-  }
-};
-
-hAPI.prototype.cdn = {
-  /**
-   * @param aDevice Voxel device ID
-   * @param aPaths Array of content paths (limit 500)
-   */
-  populate: function(aDevice, aPaths) {
-  },
-
-  /**
-   * @param aDevice Voxel device ID
-   * @param aPaths Array of content paths (limit 500)
-   */
-  purge: function(aDevice, aPaths) {
-  },
-
-  purgeDirectory: function(aDevice, aPaths) {
-  },
-
-  purgeSite: function(aDevice) {
-  },
-
-  hosts: function(aDevice, aHostname) {
-  },
-
-  stats: function(aDevice, aHostname) {
-  },
-
-  transactionStatus: function(aId) {
-  }
-};
-
-hAPI.prototype.devices = {
-  list: function(aVerbosity) {
-  },
-
-  /**
-   * @param aParams An object of optional {key: value} settings
-   */
-  createMonitor: function(aDevice, aType, aIP, aParams) {
-  },
-
-  deleteMonitor: function(aDevice, aId) {
-  },
-
-  disableMonitor: function(aDevice, aId, aMinutes) {
-  },
-
-  enableMonitor: function(aDevice, aId) {
-  },
-
-  listMonitors: function(aDevice) {
-  },
-
-  updateMonitor: function(aDevice, aId, aType, aIP, aParams) {
-  },
-
-  powerOn: function(aDevice) {
-  },
-
-  powerOff: function(aDevice) {
-  },
-
-  powerCycle: function(aDevice) {
-  }
-};
-
-hAPI.prototype.domains = {
-  list: function() {
-  },
-
-  getRecords: function(aName, aType) {
-  }
-};
-
-hAPI.prototype.ondemand = {
-  createAccessControl: function(aDevice, aLocation, aHostname, aAllow, aType) {
-  },
-
-  deleteAccessControl: function(aDevice, aLocation, aHostname, aType) {
-  },
-
-  createLocation: function(aDevice, aPath, aParams) {
-  },
-
-  deleteLocation: function(aLocationId) {
-  },
-
-  listLocations: function(aDevice) {
-  },
-
-  createAlias: function(aDevice, aAlias) {
-  },
-
-  deleteAlias: function(aDevice, aAlias) {
-  },
-
-  listSites: function(aDevice, aVerbosity) {
-  },
-
-  updateSites: function(aDevice, aHostname, aParams) {
-  }
-};
-
-hAPI.prototype.voxcloud = {
-  clone: function(aDevice, aHostname, aParams) {
-  },
-
-  destroy: function(aDevice) {
-  },
-
-  listIps: function() {
-  },
-
-  listOses: function() {
-  },
-
-  provision: function(aHostname, aLocation, aOs, aCores, aDiskSize, aParams) {
-  },
-
-  status: function(aDevice, aVerbosity) {
   }
 };
