@@ -71,7 +71,7 @@ hAPI.prototype = {
       }
 
       let data = {};
-      data.auth = {user: aUsername, password: aPassword};
+      data.auth = {user: aUsername, pass: aPassword};
       data.url = this._apiurl + "?method=voxel.hapi.authkeys.read&format=json"
 
       this._makeRequest("GET", data, callback);
@@ -104,14 +104,15 @@ hAPI.prototype = {
       }
     };
 
+    xhr.open(aHttpMethod, aData.url, aData.async || true);
+
     if (aData.auth)
-      xhr.withCredentials = true;
-    xhr.open(aHttpMethod, aData.url, 
-             aData.async || true,
-             aData.auth.user || null,
-             aData.auth.password || null);
+      xhr.setRequestHeader("Authorization", "Basic " +
+                           btoa(aData.auth.user + ":" + aData.auth.pass));
+
     if (aData.postData)
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
     xhr.send(aData.postData || null);
   },
 
