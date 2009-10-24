@@ -62,8 +62,8 @@ hAPI.prototype = {
           self._key = result.authkey.key;
           self._secret = result.authkey.secret;
           let secure = (document.location.protocol == "https:") ? ";secure" : "";
-          document.cookie = "key=" + self._key + secure;
-          document.cookie = "secret=" + self._secret + secure;
+          document.cookie = "hapi_key=" + self._key + secure;
+          document.cookie = "hapi_secret=" + self._secret + secure;
           self.authenticated = true;
           aCallback(status);
         } else {  
