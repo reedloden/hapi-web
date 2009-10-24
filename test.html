@@ -12,12 +12,13 @@
       return;
     }
 
-    document.body.removeChild(document.getElementById("auth"));
+    if (document.getElementById("auth"))
+      document.body.removeChild(document.getElementById("auth"));
 
     var method = document.getElementById("method").value;
     var params = JSON.parse(document.getElementById("params").value);
     hapi.request(method, params, function(result, status) {
-      alert(uneval(status));
+      document.getElementById("laststatus").textContent = uneval(status);
       document.getElementById("result").value = uneval(result);
     });
   }
@@ -50,6 +51,7 @@
   <button onclick="makeRequest()">Go!</button>
   <br>
   <textarea id="result" rows="30" cols="100"></textarea>
+  <div>Last status: <span id="laststatus"></span></div>
   <script>
     if (hapi.authenticated)
       document.body.removeChild(document.getElementById("auth"));
