@@ -43,6 +43,8 @@ hAPI.prototype = {
   _key: "",
   _secret: "",
   _apiurl: "https://api.voxel.net/version/1.0/",
+  // XXX Remove this once Voxel ticket #1094986 is fixed
+  _apiproxy: "https://screwedbydesign.com/hapi/proxy.php",
 
   authenticate: function(aUsername, aPassword, aCallback) {
     var tokens = [tok.split("=") for each (tok in document.cookie.split(";"))
@@ -72,7 +74,10 @@ hAPI.prototype = {
 
       let data = {};
       data.auth = {user: aUsername, pass: aPassword};
-      data.url = this._apiurl + "?method=voxel.hapi.authkeys.read&format=json"
+
+      // XXX Remove this once Voxel ticket #1094986 is fixed
+      // data.url = this._apiurl + "?method=voxel.hapi.authkeys.read&format=json"
+      data.url = this._apiproxy;
 
       this._makeRequest("GET", data, callback);
     } else {
