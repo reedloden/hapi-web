@@ -8,9 +8,11 @@
 
   function reallyMakeRequest(aStatus) {
     if (!hapi.authenticated) {
-      alert("Authentication error!");
+      alert("Authentication error: " + uneval(aStatus));
       return;
     }
+
+    document.body.removeChild(document.getElementById("auth"));
 
     var method = document.getElementById("method").value;
     var params = JSON.parse(document.getElementById("params").value);

@@ -56,16 +56,17 @@ hAPI.prototype = {
         [[, this._secret], [, this._key]] = tokens;
       this.authenticated = true;
     } else if (aUsername && aPassword) {
+      let self = this;
       function callback(result, status) {
         if (result.authkey) {
-          this._key = result.authkey.key;
-          this._secret = result.authkey.secret;
+          self._key = result.authkey.key;
+          self._secret = result.authkey.secret;
           let secure = (document.location.protocol == "https:") ? ";secure" : "";
-          document.cookie = "key=" + this._key + secure;
-          document.cookie = "secret=" + this._secret + secure;
-          this.authenticated = true;
-          aCallback();
-        } else {
+          document.cookie = "key=" + self._key + secure;
+          document.cookie = "secret=" + self._secret + secure;
+          self.authenticated = true;
+          aCallback(status);
+        } else {  
           this.authenticated = false;
           if (aCallback)
             aCallback(status);
