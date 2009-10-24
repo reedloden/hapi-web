@@ -47,7 +47,7 @@ hAPI.prototype = {
   _apiproxy: "https://screwedbydesign.com/hapi/proxy.php",
 
   authenticate: function(aUsername, aPassword, aCallback) {
-    var tokens = [tok.split("=") for each (tok in document.cookie.split(";"))
+    var tokens = [tok.trim().split("=") for each (tok in document.cookie.split(";"))
                   if (tok.indexOf("key") || tok.indexOf("secret"))];
     if (tokens.length == 2) {
       if (tokens[0][0] == "key")
@@ -141,7 +141,7 @@ hAPI.prototype = {
     };
 
     var sig = (flatten(aData, true).concat(flatten(urlParams, true))).sort();
-    urlParams.api_sig = hex_md5(this.password + sig.join(""));
+    urlParams.api_sig = hex_md5(this._secret + sig.join(""));
 
     var data = {};
     data.url = this._apiurl + "?" + flatten(urlParams, false).join("&");
