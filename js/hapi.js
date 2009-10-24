@@ -48,9 +48,9 @@ hAPI.prototype = {
 
   authenticate: function(aUsername, aPassword, aCallback) {
     var tokens = [tok.trim().split("=") for each (tok in document.cookie.split(";"))
-                  if (tok.indexOf("key") || tok.indexOf("secret"))];
+                  if (tok.indexOf("hapi_key") || tok.indexOf("hapi_secret"))];
     if (tokens.length == 2) {
-      if (tokens[0][0] == "key")
+      if (tokens[0][0] == "hapi_key")
         [[, this._key], [, this._secret]] = tokens;
       else
         [[, this._secret], [, this._key]] = tokens;
