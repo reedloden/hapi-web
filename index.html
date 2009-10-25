@@ -8,7 +8,7 @@
   <script type="application/javascript;version=1.7" src="js/hapi.js"></script>
   <script type="application/javascript" src="js/jquery-1.3.2.min.js"></script>
   <script type="application/javascript" src="js/jquery-ui-1.7.2.custom.min.js"></script>
-  <script type="application/javascript" src="js/ui.js"></script>
+  <script type="application/javascript;version=1.7" src="js/ui.js"></script>
 </head>
 <body>
   <div id="login" title="Log In">
@@ -23,6 +23,47 @@
         <label for="password">Password</label>
         <input type="password" name="password" id="password" class="text ui-widget-content ui-corner-all"/>
       </fieldset>
+  </div>
+  <div id="container" style="display: none">
+    <div id="device-tabs">
+      <ul>
+        <li><a href="#voxstructure">VoxSTRUCTURE</a></li>
+        <li><a href="#voxcast">VoxCAST</a></li>
+      </ul>
+      <div id="voxstructure">
+        <table class="ui-widget devices">
+          <thead>
+            <tr class="ui-widget-header">
+              <th>ID</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Monitors</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div id="voxstructure-devpanel" style="display: none">
+          <h1 class="vspname"></h1>
+          <div>Device ID: <span class="vspid"></span></div>
+          <div class="vsptype"></div>
+          <div><span class="vspos"></span> (<span class="vsparch"></span> bit)</div>
+        </div>
+      </div>
+      <div id="voxcast">
+        <table class="ui-widget devices">
+          <thead>
+            <tr class="ui-widget-header">
+              <th>ID</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </body>
 </html>
