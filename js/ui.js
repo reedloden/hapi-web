@@ -64,7 +64,7 @@ function initialize(res, status) {
   }
 
   voxstructure.bind("click", function(e) {
-    var elem = e.originalTarget;
+    var elem = e.originalEvent.target;
     var device = elem.parentNode;
     // XXX yuck.
     while (device.tagName != "TR")
