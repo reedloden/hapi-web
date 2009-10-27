@@ -11,7 +11,8 @@ function initialize(res, status) {
 
   var voxstructure = $("#voxstructure > .devices tbody");
   var voxcast = $("#voxcast > .devices tbody");
-  for each (var device in res.devices.device) {
+  for (var i = 0; i < res.devices.device.length; i++) {
+    var device = res.devices.device[i];
     var type = "";
     switch (device.type) {
       case "Cached Site":
