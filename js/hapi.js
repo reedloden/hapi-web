@@ -49,7 +49,8 @@ hAPI.prototype = {
   authenticate: function(aUsername, aPassword, aCallback) {
     var tokens = document.cookie.split(";");
     for (var i = 0; i < tokens.length; i++) {
-      var cookie = tokens[i].trim().split("=");
+      var cookie = tokens[i].replace(/^\s+/, "").replace(/\s+$/, "");
+      cookie = cookie.split("=");
       if (cookie[0] == "hapi_key")
         this._key = cookie[1];
       if (cookie[0] == "hapi_secret")
