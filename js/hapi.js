@@ -47,21 +47,24 @@ hAPI.prototype = {
   _apiproxy: "https://screwedbydesign.com/hapi/proxy.php",
 
   authenticate: function(aUsername, aPassword, aCallback) {
-    var tokens = [tok.trim().split("=") for each (tok in document.cookie.split(";"))
-                  if (tok.indexOf("hapi_key") != -1 || tok.indexOf("hapi_secret") != -1)];
-    if (tokens.length == 2) {
-      if (tokens[0][0] == "hapi_key")
-        [[, this._key], [, this._secret]] = tokens;
-      else
-        [[, this._secret], [, this._key]] = tokens;
+    var tokens = document.cookie.split(";");
+    for (var i = 0; i < tokens.length; i++) {
+      var cookie = tokens[i].trim().split("=");
+      if (cookie[0] == "hapi_key")
+        this._key = cookie[1];
+      if (cookie[0] == "hapi_secret")
+        this._secret = cookie[1];
+    }
+
+    if (this._key && this._secret) {
       this.authenticated = true;
     } else if (aUsername && aPassword) {
-      let self = this;
+      var self = this;
       function callback(result, status) {
         if (result.authkey) {
           self._key = result.authkey.key;
           self._secret = result.authkey.secret;
-          let secure = (document.location.protocol == "https:") ? ";secure" : "";
+          var secure = (document.location.protocol == "https:") ? ";secure" : "";
           document.cookie = "hapi_key=" + self._key + secure;
           document.cookie = "hapi_secret=" + self._secret + secure;
           self.authenticated = true;
@@ -73,7 +76,7 @@ hAPI.prototype = {
         }
       }
 
-      let data = {};
+      var data = {};
       data.auth = {user: aUsername, pass: aPassword};
 
       // XXX Remove this once Voxel ticket #1094986 is fixed
@@ -123,9 +126,12 @@ hAPI.prototype = {
   },
 
   request: function(aMethod, aData, aCallback) {
+    if (typeof aData == "function")
+      aCallback = aData;
+
     function flatten(obj, isSig) {
       var arr = [];
-      for (let key in obj) {
+      for (var key in obj) {
         if (isSig)
           arr.push(key + "" + obj[key]);
         else

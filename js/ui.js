@@ -9,10 +9,10 @@ function initialize(res, status) {
 
   $("#device-tabs").tabs();
 
-  let voxstructure = $("#voxstructure > .devices tbody");
-  let voxcast = $("#voxcast > .devices tbody");
-  for each (let device in res.devices.device) {
-    let type = "";
+  var voxstructure = $("#voxstructure > .devices tbody");
+  var voxcast = $("#voxcast > .devices tbody");
+  for each (var device in res.devices.device) {
+    var type = "";
     switch (device.type) {
       case "Cached Site":
         type = "VoxCAST";
@@ -33,9 +33,9 @@ function initialize(res, status) {
     } else {
       device.prettyType = type;
       gVsDevices[device.attributes.id] = device;
-      let monitors = "";
+      var monitors = "";
       if (device.monitors) {
-        let mon = device.monitors;
+        var mon = device.monitors;
         monitors += '<span style="color:';
         if (mon.warn > 0 && mon.down == 0)
           monitors += 'yellow" ';
@@ -63,8 +63,8 @@ function initialize(res, status) {
   }
 
   voxstructure.bind("click", function(e) {
-    let elem = e.originalTarget;
-    let device = elem.parentNode;
+    var elem = e.originalTarget;
+    var device = elem.parentNode;
     // XXX yuck.
     while (device.tagName != "TR")
       device = device.parentNode;
@@ -76,8 +76,8 @@ function initialize(res, status) {
 }
 
 function loadVsDevice(id) {
-  let dev = gVsDevices[id];
-  let panel = $("#voxstructure-devpanel");
+  var dev = gVsDevices[id];
+  var panel = $("#voxstructure-devpanel");
 
   function setData(first) {
     $(".vspname", panel).text(dev.attributes.label);
@@ -110,7 +110,7 @@ $(function() {
           .effect("highlight", {}, 1000);
     } else {
       login.dialog("close");
-      hapi.request("voxel.devices.list", {}, initialize);
+      hapi.request("voxel.devices.list", initialize);
     }
   }
 
@@ -138,5 +138,5 @@ $(function() {
   if (!hapi.authenticated)
     login.dialog("open");
   else
-    hapi.request("voxel.devices.list", {}, initialize);
+    hapi.request("voxel.devices.list", initialize);
 });
