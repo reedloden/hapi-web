@@ -77,11 +77,11 @@ function fetchDocs() {
   var secure = (document.location.protocol == "https:");
   var docframe = document.getElementById("docframe");
   if (docframe)
-    docframe.src = ((secure) ? "https" : "http") + "://api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
+    docframe.src = document.location.protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
   else {
     var iframe = document.createElement("iframe");
     iframe.id = "docframe";
-    iframe.src = ((secure) ? "https" : "http") + "://api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
+    iframe.src = document.location.protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
     iframe.height = "100%";
     iframe.width = "100%";
     iframe.setAttribute("style", "border: none");
