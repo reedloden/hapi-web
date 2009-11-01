@@ -11,7 +11,8 @@
   <script type="application/javascript" src="js/ui.js"></script>
 </head>
 <body>
-  <div id="login" title="Log In">
+  <noscript><span style="font-size: x-large; color: white">JavaScript must be enabled in order for you to use this application. However, it seems JavaScript is either disabled or not supported by your browser. Please enable JavaScript by changing your browser options, then  <a href="index.html">try again</a>.</span></noscript>
+  <div id="login" title="Log In" style="display: none">
     <p id="validateTips" class="ui-corner-all">
       <span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>
       Please log in.
@@ -23,6 +24,7 @@
         <label for="password">Password</label>
         <input type="password" name="password" id="password" class="text ui-widget-content ui-corner-all"/>
       </fieldset>
+    </form>
   </div>
   <div id="container" style="display: none">
     <div id="device-tabs">
@@ -49,6 +51,8 @@
           <div>Device ID: <span class="vspid"></span></div>
           <div class="vsptype"></div>
           <div><span class="vspos"></span> (<span class="vsparch"></span> bit)</div>
+          <div id="vspmon">
+          </div>
         </div>
       </div>
       <div id="voxcast">

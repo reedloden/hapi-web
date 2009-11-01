@@ -73,6 +73,8 @@ function initialize(res, status) {
     loadVsDevice(device.getAttribute("data-id"));
   });
 
+  $("#sidebar").accordion({header: "h3", clearStyle: true});
+
   $("#container").show('slide');
 }
 
@@ -89,6 +91,10 @@ function loadVsDevice(id) {
 
     if (!first)
       panel.fadeIn("fast");
+
+    hapi.request("voxel.devices.monitors.list", {device_id: id}, function(aResult) {
+      //$("#vspmon").append('<img
+    });
   }
 
   if (panel.is(":visible"))

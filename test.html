@@ -1,37 +1,11 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>hAPI test</title>
-<script type="application/javascript" src="js/md5.js"></script>
-<script type="application/javascript;version=1.7" src="js/hapi.js"></script>
-<script>
-  var hapi = new hAPI();
-
-  function reallyMakeRequest(aStatus) {
-    if (!hapi.authenticated) {
-      alert("Authentication error: " + uneval(aStatus));
-      return;
-    }
-
-    if (document.getElementById("auth"))
-      document.body.removeChild(document.getElementById("auth"));
-
-    var method = document.getElementById("method").value;
-    var params = JSON.parse(document.getElementById("params").value);
-    hapi.request(method, params, function(result, status) {
-      document.getElementById("laststatus").textContent = uneval(status);
-      document.getElementById("result").value = uneval(result);
-    });
-  }
-
-  function makeRequest() {
-    if (!hapi.authenticated)
-      this.hapi.authenticate(document.getElementById("name").value,
-                             document.getElementById("pass").value,
-                             reallyMakeRequest);
-    else
-      reallyMakeRequest();
-  }
-</script>
+  <title>hAPI Console</title>
+  <script type="application/javascript" src="js/md5.js"></script>
+  <script type="application/javascript" src="js/hapi.js"></script>
+  <script type="application/javascript" src="js/beautify.js"></script>
+  <script type="application/javascript" src="js/console.js"></script>
 </head>
 <body>
   <div id="auth">
@@ -42,19 +16,31 @@
     <input id="pass" type="password"/>
   </div>
   <div>
-  <label for="method">Method:</label>
-  <input id="method" type="text"/>
-  <label for="params">Parameters (as JSON object):</label>
+    <label for="method">Method:</label>
+    <span id="method-container">
+    <input id="method" type="text"/>
+    </span>
+    <label for="params">Parameters (as JSON object):</label>
 
-  <input id="params" type="text" value="{}"/>
+    <input id="params" type="text" value="{}"/>
   </div>
   <button onclick="makeRequest()">Go!</button>
+  <img id="progress" style="display:none" src="data:image/gif;base64,R0lGODlhEAAQAOMIAAAAABoaGjMzM0xMTGZmZoCAgJmZmbKysv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FyH%2FC05FVFNDQVBFMi4wAwEAAAAh%2BQQBCgAIACwAAAAAEAAQAAAESBDJiQCgmFqbZwjVhhwH9n3hSJbeSa1sm5GUIHSTYSC2jeu63q0D3PlwCB1lMMgUChgmk%2FJ8LqUIAgFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BUKgmFqbpxDV9gAA9n3hSJbeSa1sm5HUMHTTcTy2jeu63q0D3PlwDx2FQMgYDBgmk%2FJ8LqWPQuFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BYSgmFqb5xjV9gQB9n3hSJbeSa1sm5EUQXQTADy2jeu63q0D3PlwDx2lUMgcDhgmk%2FJ8LqUPg%2BFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BcagmFqbJyHV9ggC9n3hSJbeSa1sm5FUUXRTEDy2jeu63q0D3PlwDx3FYMgAABgmk%2FJ8LqWPw%2BFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BQihmFqbZynV9gwD9n3hSJbeSa1sm5GUYXSTIDy2jeu63q0D3PlwDx3lcMgEAhgmk%2FJ8LqUPAOBRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BUqhmFqbpzHV9hAE9n3hSJbeSa1sm5HUcXTTMDy2jeu63q0D3PlwDx0FAMgIBBgmk%2FJ8LqWPQOBRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BYyhmFqb5znV9hQF9n3hSJbeSa1sm5EUAHQTQTy2jeu63q0D3PlwDx0lEMgMBhgmk%2FJ8LqUPgeBRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2Bc6hmFqbJwDV9hgG9n3hSJbeSa1sm5FUEHRTUTy2jeu63q0D3PlwDx1FIMgQCBgmk%2FJ8LqWPweBRhV6z2q0VF94iJ9pOBAA7"/>
   <br>
-  <textarea id="result" rows="30" cols="100"></textarea>
-  <div>Last status: <span id="laststatus"></span></div>
+  <div style="height: auto">
+    <div style="float:left; width:40%">
+      <textarea id="result" style="width:100%; height: 500px" readonly="readonly"></textarea>
+    </div>
+    <div style="float:right; width:60%; height:500px;" id="docs">
+    </div>
+  </div>
+  <div style="clear:both">Last status: <span id="laststatus"></span></div>
   <script>
-    if (hapi.authenticated)
+    if (hapi.authenticated) {
+      document.getElementById("method").setAttribute("readonly", true);
       document.body.removeChild(document.getElementById("auth"));
+      fillMethods();
+    }
   </script>
 </body>
 </html>
