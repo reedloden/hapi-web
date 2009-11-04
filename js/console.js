@@ -36,6 +36,7 @@ function fillMethods() {
     select.appendChild(defopt);
 
     var methods = result.version.methods.method;
+    methods.push({attributes:{name:"voxel.devices.metrics.read"}});
     for (var i = 0; i < methods.length; i++) {
       var hm = methods[i].attributes.name;
       var option = document.createElement("option");
@@ -74,7 +75,6 @@ function fetchDocs() {
     docs.innerHTML = foo;
   }
   xhr.send(null);*/
-  var secure = (document.location.protocol == "https:");
   var docframe = document.getElementById("docframe");
   if (docframe)
     docframe.src = document.location.protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
