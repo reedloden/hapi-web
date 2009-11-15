@@ -76,12 +76,13 @@ function fetchDocs() {
   }
   xhr.send(null);*/
   var docframe = document.getElementById("docframe");
+  var protocol = (document.location.protocol == "https:") ? "https:" : "http:";
   if (docframe)
-    docframe.src = document.location.protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
+    docframe.src = protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
   else {
     var iframe = document.createElement("iframe");
     iframe.id = "docframe";
-    iframe.src = document.location.protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
+    iframe.src = protocol + "//api.voxel.net/docs/version/1.0/" + method.value + "#main-content";
     iframe.height = "100%";
     iframe.width = "100%";
     iframe.setAttribute("style", "border: none");
