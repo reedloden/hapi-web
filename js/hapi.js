@@ -43,10 +43,14 @@ hAPI.prototype = {
   _key: "",
   _secret: "",
   _apiurl: "https://api.voxel.net/version/1.0/",
+  _inWorker: (typeof document == "undefined"),
   // XXX Remove this once Voxel ticket #1094986 is fixed
   _apiproxy: "https://screwedbydesign.com/hapi/proxy.php",
 
   authenticate: function(aUsername, aPassword, aCallback) {
+    if (this._inWorker)
+      return;
+
     var tokens = document.cookie.split(";");
     for (var i = 0; i < tokens.length; i++) {
       var cookie = tokens[i].replace(/^\s+/, "").replace(/\s+$/, "");
@@ -90,6 +94,13 @@ hAPI.prototype = {
       if (aCallback)
         aCallback({code: 500, msg: "Username and password are required"});
     }
+  },
+
+  logout: function() {
+    this._key = null;
+    this._secret = null;
+    document.cookie = "hapi_key=;" + "expires=Mon, 01-Jan-70 00:00:00 GMT;";
+    document.cookie = "hapi_secret=;" + "expires=Mon, 01-Jan-70 00:00:00 GMT;";
   },
 
   _makeRequest: function(aHttpMethod, aData, aCallback) {
@@ -145,7 +156,7 @@ hAPI.prototype = {
       method: aMethod,
       key: this._key,
       format: "json",
-      timestamp: this._generateTimestamp()
+      timestamp: (new Date()).toISOString()
     };
 
     var sig = (flatten(aData, true).concat(flatten(urlParams, true))).sort();
@@ -156,23 +167,6 @@ hAPI.prototype = {
     data.postData = flatten(aData, false).join("&");
 
     this._makeRequest("POST", data, aCallback);
-  },
-
-  _generateTimestamp: function() {
-    function pad(s, l) {
-      s = s.toString();
-      while (s.length < l)
-        s = '0' + s;
-      return s;
-    }
-
-    var date = new Date();
-    return pad(date.getUTCFullYear(), 4) + "-" +
-           pad(date.getUTCMonth() + 1, 2) + "-" +
-           pad(date.getUTCDate(), 2) + "T" +
-           pad(date.getUTCHours(), 2) + ":" +
-           pad(date.getUTCMinutes(), 2) + ":" +
-           pad(date.getUTCSeconds(), 2) + "Z";
   },
 
   test: function(aParams) {

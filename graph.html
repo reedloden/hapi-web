@@ -2316,7 +2316,7 @@ var data = {
 <script src="js/jquery.flot.min.js" ></script>
 <script src="js/jquery.flot.selection.min.js"></script>
 </head>
-<body>
+<body style="background: black">
 <div id="bwgraph" style="width:600px;height:300px;"></div>
 <div id="reqgraph" style="width:600px;height:300px;"></div>
 <div id="cachegraph" style="width:600px;height:300px;"></div>
@@ -2340,7 +2340,6 @@ $(function () {
     data: []
   };
 
-  var done = false;
   function dateFormatter(val, axis) {
     var showMin = (((axis.max - axis.min) * 1000) <= 18000000 /* 5 hours */);
     var showSec = (((axis.max - axis.min) * 1000) <= 300000 /* 5 minutes */);
@@ -2354,20 +2353,46 @@ $(function () {
   }
 
   var bwOptions = {
+    grid: {
+      color: "grey",
+      borderColor: "rgba(255, 255, 255, 0.3)",
+      tickColor: "rgba(255, 255, 255, 0.3)"
+    },
+    legend: {
+      backgroundOpacity: 0.8
+    },
+    series: {
+      lines: {
+        fill: 0.2
+      }
+    },
     yaxis: {
       tickFormatter: function(val, axis) {
         return (val / 100000).toFixed(axis.tickDecimals) + " MB";
       }
     },
     xaxis: {
-      tickFormatter: dateFormatter
+      tickFormatter: dateFormatter,
     },
     selection: {mode: "x"}
   };
   
   var options = {
+    grid: {
+      color: "grey",
+      borderColor: "rgba(255, 255, 255, 0.3)",
+      tickColor: "rgba(255, 255, 255, 0.3)"
+    },
+    legend: {
+      backgroundOpacity: 0.8
+    },
+    series: {
+      lines: {
+        fill: 0.2
+      }
+    },
     xaxis: {
-      tickFormatter: dateFormatter
+      tickFormatter: dateFormatter,
     },
     selection: {mode: "x"}
   };

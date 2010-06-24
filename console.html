@@ -5,41 +5,49 @@
   <script type="application/javascript" src="js/hapi.js"></script>
   <script type="application/javascript" src="js/beautify.js" async="async"></script>
   <script type="application/javascript" src="js/console.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/console.css" />
 </head>
 <body>
-  <div id="auth">
-    <label for="name">Username:</label>
-
-    <input id="name" type="text"/>
-    <label for="pass">Password:</label>
-    <input id="pass" type="password"/>
+  <div id="logout" onclick="logout()">
+    Log out
   </div>
-  <div>
-    <label for="method">Method:</label>
-    <span id="method-container">
-    <input id="method" type="text"/>
-    </span>
-    <label for="params">Parameters (as JSON object):</label>
-
-    <input id="params" type="text" value="{}"/>
-  </div>
-  <button onclick="makeRequest()">Go!</button>
-  <img id="progress" style="display:none" src="data:image/gif;base64,R0lGODlhEAAQAOMIAAAAABoaGjMzM0xMTGZmZoCAgJmZmbKysv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FyH%2FC05FVFNDQVBFMi4wAwEAAAAh%2BQQBCgAIACwAAAAAEAAQAAAESBDJiQCgmFqbZwjVhhwH9n3hSJbeSa1sm5GUIHSTYSC2jeu63q0D3PlwCB1lMMgUChgmk%2FJ8LqUIAgFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BUKgmFqbpxDV9gAA9n3hSJbeSa1sm5HUMHTTcTy2jeu63q0D3PlwDx2FQMgYDBgmk%2FJ8LqWPQuFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BYSgmFqb5xjV9gQB9n3hSJbeSa1sm5EUQXQTADy2jeu63q0D3PlwDx2lUMgcDhgmk%2FJ8LqUPg%2BFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BcagmFqbJyHV9ggC9n3hSJbeSa1sm5FUUXRTEDy2jeu63q0D3PlwDx3FYMgAABgmk%2FJ8LqWPw%2BFRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BQihmFqbZynV9gwD9n3hSJbeSa1sm5GUYXSTIDy2jeu63q0D3PlwDx3lcMgEAhgmk%2FJ8LqUPAOBRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BUqhmFqbpzHV9hAE9n3hSJbeSa1sm5HUcXTTMDy2jeu63q0D3PlwDx0FAMgIBBgmk%2FJ8LqWPQOBRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2BYyhmFqb5znV9hQF9n3hSJbeSa1sm5EUAHQTQTy2jeu63q0D3PlwDx0lEMgMBhgmk%2FJ8LqUPgeBRhV6z2q0VF94iJ9pOBAAh%2BQQBCgAPACwAAAAAEAAQAAAESPDJ%2Bc6hmFqbJwDV9hgG9n3hSJbeSa1sm5FUEHRTUTy2jeu63q0D3PlwDx1FIMgQCBgmk%2FJ8LqWPweBRhV6z2q0VF94iJ9pOBAA7"/>
-  <br>
-  <div style="height: auto">
-    <div style="float:left; width:40%">
-      <textarea id="result" style="width:100%; height: 500px" readonly="readonly"></textarea>
+  <div id="container" hidden="true">
+    <div id="console" class="box">
+      <div id="console-container">
+        <div id="entry">
+          <select id="method" onchange="fetchDocs()">
+            <option value="default">Select a Method</option>
+          </select>
+          <hr/>
+          <div id="paramhead">Parameters <img onclick="addParam()" alt="Add" title="Add a Parameter" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAABGdBTUEAAK%2FINwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAJvSURBVDjLpZPrS5NhGIf9W7YvBYOkhlkoqCklWChv2WyKik7blnNris72bi6dus0DLZ0TDxW1odtopDs4D8MDZuLU0kXq61CijSIIasOvv94VTUfLiB74fXngup7nvrnvJABJ%2F5PfLnTTdcwOj4RsdYmo5glBWP6iOtzwvIKSWstI0Wgx80SBblpKtE9KQs%2FWe7EaWoT%2F8wbWP61gMmCH0lMDvokT4j25TiQU%2FITFkek9Ow6%2B7WH2gwsmahCPdwyw75uw9HEO2gUZSkfyI9zBPCJOoJ2SMmg46N61YO%2FrNoa39Xi41oFuXysMfh36%2FFp0b7bAfWAH6RGi0HglWNCbzYgJaFjRv6zGuy%2Bb9It96N3SQvNKiV9HvSaDfFEIxXItnPs23BzJQd6DDEVM0OKsoVwBG%2F1VMzpXVWhbkUM2K4oJBDYuGmbKIJ0qxsAbHfRLzbjcnUbFBIpx%2FqH3vQv9b3U03IQ%2FHfFkERTzfFj8w8jSpR7GBE123uFEYAzaDRIqX%2F2JAtJbDat%2FCOkd7CNBva2cMvq0MGxp0PRSCPF8BXjWG3FgNHc9XPT71Ojy3sMFdfJRCeKxEsVtKwFHwALZfCUk3tIfNR8XiJwc1LmL4dg141JPKtj3WUdNFJqLGFVPC4OkR4BxajTWsChY64wmCnMxsWPCHcutKBxMVp5mxA1S%2BaMComToaqTRUQknLTH62kHOVEE%2BVQnjahscNCy0cMBWsSI0TCQcZc5ALkEYckL5A5noWSBhfm2AecMAjbcRWV0pUTh0HE64TNf0mczcnnQyu%2FMilaFJCae1nw2fbz1DnVOxyGTlKeZft%2FFf8x1BRssfACjTwQAAAABJRU5ErkJggg%3D%3D"/></div>
+          <table id="parameters" border="0">
+            <tr id="template" class="param" style="display: none">
+              <td><input class="pname" type="text" placeholder="Name"/></td>
+              <td><input class="pvalue" type="text" placeholder="Value"/></td>
+              <td><img onclick="removeParam(this)" alt="Delete" title="Remove Set" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAABGdBTUEAAK%2FINwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAJdSURBVDjLpZP7S1NhGMf9W7YfogSJboSEUVCY8zJ31trcps6zTI9bLGJpjp1hmkGNxVz4Q6ildtXKXzJNbJRaRmrXoeWx8tJOTWptnrNryre5YCYuI3rh%2B8vL%2B%2Fm8PA%2FPkwIg5X%2By5mJWrxfOUBXm91QZM6UluUmthntHqplxUml2lciF6wrmdHriI0Wx3xw2hAediLwZRWRkCPzdDswaSvGqkGCfq8VEUsEyPF1O8Qu3O7A09RbRvjuIttsRbT6HHzebsDjcB4%2FJgFFlNv9MnkmsEszodIIY7Oaut2OJcSF68Qx8dgv8tmqEL1gQaaARtp5A%2BN4NzB0lMXxon%2FuxbI8gIYjB9HytGYuusfiPIQcN71kjgnW6VeFOkgh3XcHLvAwMSDPohOADdYQJdF1FtLMZPmslvhZJk2ahkgRvq4HHUoWHRDqTEDDl2mDkfheiDgt8pw340%2FEocuClCuFvboQzb0cwIZgki4KhzlaE6w0InipbVzBfqoK%2FqRH94i0rgokSFeO11iBkp8EdV8cfJo0yD75aE2ZNRvSJ0lZKcBXLaUYmQrCzDT6tDN5SyRqYlWeDLZAg0H4JQ%2BJt6M3atNLE10VSwQsN4Z6r0CBwqzXesHmV%2BBeoyAUri8EyMfi2FowXS5dhd7doo2DVII0V5BAjigP89GEVAtda8b2ehodU4rNaAW%2BdGfzlFkyo89GTlcrHYCLpKD%2BV7yeeHNzLjkp24Uu1Ed6G8%2FF8qjqGRzlbl2H2dzjpMg1KdwsHxOlmJ7GTeZC%2FnesXbeZ6c9OYnuxUc3fmBuFft%2FFf8xMd0s65SXIb%2FgAAAABJRU5ErkJggg%3D%3D"/>
+            </tr>
+          </table>
+          <button onclick="submit()">Submit</button>
+        </div>
+        <hr/>
+        <textarea id="result" readonly="readonly"></textarea>
+      </div>
     </div>
-    <div style="float:right; width:60%; height:500px;" id="docs">
-    </div>
+    <iframe id="docframe" src="data:text/html,<p>Select a method to view its documentation.</p>"></iframe>
   </div>
-  <div style="clear:both">Last status: <span id="laststatus"></span></div>
+  <div style="clear: both; padding: 2px;">
+  <aside id="auth" class="box">
+    <p>Please log in to your Voxel account</p>
+    <form onsubmit="login(); return false"/>
+      <input id="name" type="text" placeholder="Username"/>
+      <input id="pass" type="password" placeholder="Password"/>
+      <p>
+        <button type="submit">Log in</button>
+      </p>
+    </form>
+  </aside>
   <script>
-    if (hapi.authenticated) {
-      document.getElementById("method").setAttribute("readonly", true);
-      document.body.removeChild(document.getElementById("auth"));
-      fillMethods();
-    }
+    toggleUI(hapi.authenticated);
   </script>
 </body>
 </html>
