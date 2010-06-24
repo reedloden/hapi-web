@@ -28,7 +28,7 @@ function login() {
     pass.value = "";
 
     if (!hapi.authenticated) {
-      alert("An error occurred: " + uneval(status));
+      alert("An error occurred: " + JSON.stringify(status));
       return;
     }
 
@@ -92,6 +92,6 @@ function submit() {
   }
 
   hapi.request(method, data, function(result, status) {
-    document.getElementById("result").value = js_beautify(uneval(result).replace(/(^\(|\)$)/g, ""), {indent_size: 2});
+    document.getElementById("result").value = js_beautify(JSON.stringify(result), {indent_size: 2});
   });
 }
