@@ -1,0 +1,1 @@
+An open web is a happy web.
